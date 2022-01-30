@@ -1,31 +1,27 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const User = require('./User')
 const bcrypt = require('bcrypt')
-const cors = require("cors")
+const authRoutes = require('./routes/authRoutes')
+const cookieParser = require('cookie-parser')
 
-// mongoose.connect('mongodb://localhost/users3')
 
-// async function find() {
-//     try {
-//         const user = await User.find()
-//         console.log(user)
-//     } catch (e) {
-//         console.log(e.message);
-//     }
-// }
 
-// find()
+const connectionString = 'mongodb://localhost/Users'
+
+mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(console.log("connected"))
+    .catch((e) => console.log(e))
 
 const app = express()
 const port = 3001
 
 app.use(bodyParser.json())
-
-// app.use(express.urlencoded({ extended: false }))
-// app.use(cors)
-
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Headers',
@@ -33,17 +29,13 @@ app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE'))
     next()
 })
+app.use(cookieParser())
+
+app.use(authRoutes)
+
+app.get('/', (req, res) => {})
 
 
-app.get('/', (req, res) =>
-    res.send("get successful"))
 
-app.post('/', (req, res) =>
-    console.log(req.body)
-)
-
-app.post('/signUp', async(req, res) => {
-    console.log(req.body);
-})
 
 app.listen(port, () => console.log(`listening on port ${port}!`))
