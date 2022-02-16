@@ -13,11 +13,18 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'enter a password'],
-        minlength: [4, 'password too short']
-    }
+        minlength: [4, 'password too short'],
+        // select: false,
+    },
+    resetPasswordToken: String,
+    resetPasswordExpiry: Date,
 }, { collection: 'users' })
 
 userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) {
+        next()
+    }
+
     const salt = await bcrypt.genSalt()
     this.password = await bcrypt.hash(this.password, salt)
     next()
