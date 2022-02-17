@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const postSchema = new mongoose.Schema({
 
-    // senderName: String,
+    senderID: mongoose.SchemaTypes.ObjectId,
     // atSenderName: String,
     // sendTime: Date,
     content: {
@@ -10,7 +10,6 @@ const postSchema = new mongoose.Schema({
         required: true,
         maxlength: 64,
     },
-
 
 }, { collection: 'postcontents' })
 

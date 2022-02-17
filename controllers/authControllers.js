@@ -3,43 +3,19 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 
-
-const maxAge = 3 * 24 * 60 * 60
-    //create jwt
-const createToken = (id) => {
-    return jwt.sign({ id }, 'secret', { expiresIn: maxAge })
-}
-
-
 module.exports.signUp_post = async(req, res) => {
     const { email, password } = req.body
     console.log(req.body)
 
-    const handleError = (error) => {
-        let errors = { email: '', password: '' }
-
-        if (error.code === 11000) {
-            errors.email = "email in use"
-            return errors
-        }
-
-        if (error.message.includes('validation failed')) {
-            Object.values(error.errors).forEach(({ properties }) => {
-                errors[properties.path] = properties.message
-            })
-        }
-        return errors
-    }
-
     try {
         const user = await User.create({ email, password })
-        const token = createToken(user._id)
-        res.status(200).json({ success: "true", token: token })
+        const token = jwt.sign({ userID: user.id, email: user.email },
+            'secret', { expiresIn: '24h' }
+        )
+        res.status(200).json({ userID: user.id, email: user.email, token: token })
 
     } catch (error) {
-        console.log(error)
-        const errors = handleError(error)
-        res.status(400).json({ errors })
+        res.status(400).json({ error })
     }
 
 }
@@ -51,28 +27,30 @@ module.exports.signIn_post = async(req, res) => {
 
         if (user) {
             console.log(user)
-            console.log(req.headers.authorization.authToken)
 
             const compare = await bcrypt.compare(req.body.password, user.password)
 
-            if (compare == true) {
-                const token = await createToken(user._id)
+            if (compare === true) {
+                const token = jwt.sign({ userID: user.id, email: user.email },
+                    'secret', { expiresIn: '24h' }
+                )
                 console.log(token)
-                    // console.log(jwt.verify(token, 'secret'));
-                    // res.cookie('jwt', token, { maxAge: maxAge * 1000 })
-                    // res.status(200).json(user)
-                res.status(200).json({ success: "true", token: token })
+                res.status(200).json({ userID: user.id, email: user.email, token: token })
+
             } else {
                 console.log(compare)
                 res.status(400).json('wrong password')
             }
-
         } else {
             res.json('invalid email')
         }
     } catch (error) {
         console.log(error);
     }
+
+    const token = req.headers.authorization
+    console.log(JSON.parse(token));
+
 }
 
 module.exports.forgotPassword = async(req, res) => {

@@ -33,13 +33,13 @@ app.use((req, res, next) => {
 })
 app.use(cookieParser())
 app.use(authRoutes)
-app.use(postRoutes)
 app.use(auth)
+app.use(postRoutes)
 
 app.get('/', (req, res) => {})
 
 app.get('/protected', (req, res) => {
-    console.log('/protected');
+    res.send('/protected');
 })
 
 

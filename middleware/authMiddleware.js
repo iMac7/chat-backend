@@ -2,9 +2,10 @@ const jwt = require('jsonwebtoken')
 
 module.exports = (req, res, next) => {
 
-    // console.log(req.headers.authorization)
-    // next()
-    const token = req.cookies.jwt
+    if (req.method === 'OPTIONS') {
+        return next()
+    }
+    const token = JSON.parse(req.headers.authorization).token
     console.log(token);
 
     if (token) {
@@ -22,7 +23,3 @@ module.exports = (req, res, next) => {
         res.json('/login')
     }
 }
-
-
-
-// req.headers.authorization.split('')[1]

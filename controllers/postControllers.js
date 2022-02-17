@@ -3,8 +3,6 @@ const Post = require('../models/Post')
 module.exports.publicPost_get = async(req, res) => {
     try {
         const post = await Post.find()
-        console.log(post)
-        console.log('public post')
         res.json(post)
 
     } catch (error) {
@@ -13,10 +11,10 @@ module.exports.publicPost_get = async(req, res) => {
 }
 
 module.exports.publicPost_post = async(req, res) => {
+    const postedBy = JSON.parse(req.body.postedBy).userID
 
     try {
-        const post = await Post.create({ content: req.body.post })
-        console.log(req.body)
+        const post = await Post.create({ content: req.body.post, senderID: postedBy })
         res.status(201).json('post successful')
 
     } catch (error) {
