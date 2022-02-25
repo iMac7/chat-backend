@@ -4,15 +4,15 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 
 module.exports.signUp_post = async(req, res) => {
-    const { email, password } = req.body
     console.log(req.body)
+    const { email, password } = req.body
 
     try {
         const user = await User.create({ email, password })
         const token = jwt.sign({ userID: user.id, email: user.email },
             'secret', { expiresIn: '24h' }
         )
-        res.status(200).json({ userID: user.id, email: user.email, token: token })
+        res.status(200).json({ userID: user.id, email: user.email, token: token, sentAt: 1000 * 60 * 60 * 24 })
 
     } catch (error) {
         res.status(400).json({ error })
@@ -35,7 +35,7 @@ module.exports.signIn_post = async(req, res) => {
                     'secret', { expiresIn: '24h' }
                 )
                 console.log(token)
-                res.status(200).json({ userID: user.id, email: user.email, token: token })
+                res.status(200).json({ userID: user.id, email: user.email, token: token, sentAt: 1000 * 60 * 60 * 24 })
 
             } else {
                 console.log(compare)
@@ -47,9 +47,6 @@ module.exports.signIn_post = async(req, res) => {
     } catch (error) {
         console.log(error);
     }
-
-    const token = req.headers.authorization
-    console.log(JSON.parse(token));
 
 }
 

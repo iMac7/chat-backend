@@ -6,7 +6,8 @@ module.exports = (req, res, next) => {
         return next()
     }
     const token = JSON.parse(req.headers.authorization).token
-    console.log(token);
+        // console.log(token);
+        // next()
 
     if (token) {
         jwt.verify(token, 'secret', (err, decodedToken) => {
@@ -20,6 +21,6 @@ module.exports = (req, res, next) => {
             }
         })
     } else {
-        res.json('/login')
+        res.status(401).json('/login')
     }
 }
