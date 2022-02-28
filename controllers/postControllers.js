@@ -11,16 +11,18 @@ module.exports.publicPost_get = async(req, res) => {
 }
 
 module.exports.publicPost_post = async(req, res) => {
-    const parsedBody = JSON.parse(req.body.sender)
-    const postedBy = parsedBody.userID
+    const { content, sender, image } = req.body
 
     try {
-        const post = await Post.create({ content: req.body.post, senderID: postedBy, imageUrl: req.file.path })
+        if (image) {
+            const post = await Post.create({ content: content, senderID: sender, imageUrl: image })
+        } else {
+            const post = await Post.create({ content: content, senderID: sender })
+        }
+        console.log(post);
         res.status(201).json('post successful')
 
     } catch (error) {
         res.json(error)
     }
-
-
 }

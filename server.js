@@ -15,13 +15,14 @@ const auth = require('./middleware/authMiddleware')
 const fileUpload = require('express-fileupload')
 
 const connectionString = 'mongodb://localhost/Users'
+const app = express()
+const port = 3001
 
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(console.log("connected"))
+    .then(app.listen(port, () => console.log(`listening on port ${port}!`)))
     .catch((e) => console.log(e))
 
-const app = express()
-const port = 3001
 
 app.use('/uploads/images', express.static(path.join('uploads', 'images')))
 
@@ -40,15 +41,8 @@ app.use(authRoutes)
     // app.use(auth)
 app.use(postRoutes)
 
-
-
 app.get('/', (req, res) => {})
 
 app.get('/protected', (req, res) => {
     res.send('/protected');
 })
-
-
-
-
-app.listen(port, () => console.log(`listening on port ${port}!`))
