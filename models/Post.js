@@ -1,19 +1,36 @@
 const mongoose = require('mongoose')
 
+const replySchema = new mongoose.Schema({
+
+})
+
 const postSchema = new mongoose.Schema({
 
     senderID: mongoose.SchemaTypes.ObjectId,
     atSenderName: String,
     sendTime: Date,
+
     content: {
         type: String,
         required: true,
-        maxlength: 64,
+        maxlength: 100,
     },
+
     imageUrl: {
         type: String,
-        required: false,
-    }
+    },
+
+    replies: replySchema,
+
+    likes: {
+        type: Number,
+        default: 0,
+    },
+
+    likesBy: {
+        type: mongoose.SchemaTypes.ObjectId,
+        default: [],
+    },
 
 }, { collection: 'postcontents' })
 

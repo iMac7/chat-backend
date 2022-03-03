@@ -14,10 +14,26 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'enter a password'],
         minlength: [4, 'password too short'],
-        // select: false,
+    },
+    joined: {
+        type: Date,
+        immutable: true,
+    },
+    likedPosts: {
+        type: [mongoose.SchemaTypes.ObjectId],
+        ref: 'PostContent'
+    },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
+    following: {
+        type: [mongoose.SchemaTypes.ObjectId],
+        ref: 'User'
     },
     resetPasswordToken: String,
     resetPasswordExpiry: Date,
+
 }, { collection: 'users' })
 
 userSchema.pre('save', async function(next) {
