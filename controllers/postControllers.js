@@ -1,26 +1,34 @@
 const Post = require('../models/Post')
 const User = require('../models/User')
 
-String.prototype.toObjectId = function() {
-    var ObjectId = (require('mongoose').Types.ObjectId);
-    return new ObjectId(this.toString());
-};
-
 
 module.exports.publicPost_get = async(req, res) => {
+    const userID = JSON.parse(req.headers.authorization).userID
+
     try {
-        const post = await Post.find()
-        res.json(post)
+        const posts = await Post.find().lean()
+        const newposts = posts.map(post => {
+            // return {...post, liked: post.likedBy.includes(userID) }
+
+            if (post.likedBy.includes(userID)) {
+                post.liked = true
+            } else {
+                post.liked = false
+            }
+            return post;
+        })
+        res.json(newposts)
+
 
     } catch (error) {
-        res.json(error)
+        console.log(error)
     }
+
 }
 
 module.exports.publicPost_post = async(req, res) => {
 
     const { content, sender } = req.body
-        // console.log(req.file.path);
 
     try {
         const post = await Post.create({ content: content, senderID: sender, imageUrl: req.file.path })
@@ -50,12 +58,11 @@ module.exports.likePost_post = async(req, res) => {
             await post.save()
             res.json('unliked :( ')
 
-        } else if (post && post.likedBy.includes(senderID) === false) {
+        } else {
             post.likes += 1
             post.likedBy.push(req.body.senderID)
             await post.save()
             res.json('liked :) !')
-
         }
 
     } catch (error) {
