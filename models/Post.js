@@ -27,10 +27,12 @@ const postSchema = new mongoose.Schema({
         default: 0,
     },
 
-    likesBy: {
-        type: mongoose.SchemaTypes.ObjectId,
+    likedBy: {
+        type: [String],
         default: [],
+        ref: 'User'
     },
+    verified: false
 
 }, { collection: 'postcontents' })
 

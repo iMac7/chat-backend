@@ -34,12 +34,12 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE')
     next()
 })
+
 app.use(bodyParser.json())
+app.use(postRoutes)
 
 
 app.use(authRoutes)
-    // app.use(auth)
-app.use(postRoutes)
 
 app.get('/', (req, res) => {})
 
