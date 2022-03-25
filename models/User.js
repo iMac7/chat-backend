@@ -10,27 +10,40 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         validate: [isEmail, 'Enter a valid email']
     },
+
+    username: {
+        type: String,
+        unique: true,
+        minlength: [3, 'username should have at least 3 characters'],
+        maxlength: [15, 'kwani ni ribashongilogasheshiakili? XD ']
+    },
+
+    bio: {
+        type: String,
+        maxlength: [40, 'imetosha bro! XD ']
+    },
+
     password: {
         type: String,
         required: [true, 'enter a password'],
         minlength: [4, 'password too short'],
     },
+
     joined: {
         type: Date,
-        immutable: true,
+        // immutable: true,
     },
+
     likedPosts: {
         type: [mongoose.SchemaTypes.ObjectId],
         ref: 'PostContent'
     },
+
     verified: {
         type: Boolean,
         default: false,
     },
-    following: {
-        type: [mongoose.SchemaTypes.ObjectId],
-        ref: 'User'
-    },
+
     resetPasswordToken: String,
     resetPasswordExpiry: Date,
 

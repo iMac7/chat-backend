@@ -5,9 +5,11 @@ const replySchema = new mongoose.Schema({
 })
 
 const postSchema = new mongoose.Schema({
+    sender: {
+        type: String,
+        required: true,
+    },
 
-    senderID: mongoose.SchemaTypes.ObjectId,
-    atSenderName: String,
     sendTime: Date,
 
     content: {
@@ -32,7 +34,11 @@ const postSchema = new mongoose.Schema({
         default: [],
         ref: 'User'
     },
-    verified: false
+
+    profilePic: {
+        type: String,
+        default: null
+    }
 
 }, { collection: 'postcontents' })
 

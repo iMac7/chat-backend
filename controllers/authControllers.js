@@ -31,15 +31,11 @@ module.exports.signIn_post = async(req, res) => {
         const user = await User.findOne({ email: req.body.email })
 
         if (user) {
-            console.log(user)
-
-            // const compare = await bcrypt.compare(req.body.password, user.password)
             const compare = await user.comparePassword(body.password)
 
             if (compare) {
                 const token = jwt.sign(user.id, process.env.secret)
-                console.log(`sent token:${token}`)
-                res.status(200).json({ userID: user.id, token: token })
+                res.status(200).json({ userID: user.id, token: token, verified: user.verified })
 
             } else {
                 console.log(`compare:${compare}`)

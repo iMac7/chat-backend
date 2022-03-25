@@ -13,6 +13,7 @@ const authRoutes = require('./routes/authRoutes')
 const postRoutes = require('./routes/postRoutes')
 const auth = require('./middleware/authMiddleware')
 const fileUpload = require('express-fileupload')
+const Post = require('./models/Post')
 
 const connectionString = 'mongodb://localhost/Users'
 const app = express()
@@ -46,3 +47,22 @@ app.get('/', (req, res) => {})
 app.get('/protected', (req, res) => {
     res.send('/protected');
 })
+
+app.get('/profile/:id', async(req, res) => {
+    console.log(req.params.id);
+    const user = await User.findOne({ _id: req.params.id })
+    res.json({
+        email: user.email,
+        username: user.username ? user.username : null,
+        verified: user.verified,
+        bio: user.bio ? user.bio : null,
+    })
+})
+
+// app.get('/profile/:id/update', async(req, res) => {
+//     const {} = req.body
+//     const user = await User.findOne({ _id: req.params.id })
+
+//     await user.save()
+//     res.status(200).json('updated successfully !')
+// })
