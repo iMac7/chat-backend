@@ -55,14 +55,15 @@ app.get('/profile/:id', async(req, res) => {
         email: user.email,
         username: user.username ? user.username : null,
         verified: user.verified,
-        bio: user.bio ? user.bio : null,
+        bio: user.bio ? user.bio : '',
     })
 })
 
-// app.get('/profile/:id/update', async(req, res) => {
-//     const {} = req.body
-//     const user = await User.findOne({ _id: req.params.id })
+app.post('/profile/:id/update', async(req, res) => {
+    const { username, bio } = req.body
+    const user = await User.findOne({ _id: req.params.id })
+    user.username = username
+    user.bio = bio
+    await user.save().then(res.json('profile updated!'))
 
-//     await user.save()
-//     res.status(200).json('updated successfully !')
-// })
+})

@@ -6,8 +6,11 @@ const router = Router()
 
 router.get('/publicPosts', postControllers.publicPost_get)
 
+router.get('/publicPosts/:id/replies', postControllers.publicPost_replies)
+
 router.post('/publicPost', fileUpload.single('image'), postControllers.publicPost_post)
 
 router.post('/likePost', postControllers.likePost_post)
+
 
 module.exports = router

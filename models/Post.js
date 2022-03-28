@@ -1,6 +1,33 @@
 const mongoose = require('mongoose')
 
 const replySchema = new mongoose.Schema({
+    sender: {
+        type: String,
+        required: true,
+    },
+
+    sendTime: Date,
+
+    content: {
+        type: String,
+        required: true,
+        maxlength: 100,
+    },
+
+    imageUrl: {
+        type: String,
+    },
+
+    likes: {
+        type: Number,
+        default: 0,
+    },
+
+    likedBy: {
+        type: [String],
+        default: [],
+        ref: 'User'
+    },
 
 })
 
@@ -22,7 +49,7 @@ const postSchema = new mongoose.Schema({
         type: String,
     },
 
-    replies: replySchema,
+    replies: [replySchema],
 
     likes: {
         type: Number,

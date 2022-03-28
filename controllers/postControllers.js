@@ -3,6 +3,7 @@ const User = require('../models/User')
 
 
 module.exports.publicPost_get = async(req, res) => {
+
     const userID = JSON.parse(req.headers.authorization).userID
 
     try {
@@ -21,6 +22,13 @@ module.exports.publicPost_get = async(req, res) => {
         console.log(error)
     }
 }
+
+//get
+module.exports.publicPost_replies = async(req, res) => {
+    const post = await Post.findOne({ _id: req.params.id })
+    res.json(post)
+}
+
 
 module.exports.publicPost_post = async(req, res) => {
 
@@ -44,11 +52,7 @@ module.exports.publicPost_post = async(req, res) => {
                     content: content,
                 })
                 .then(res.status(201).json('post successful'))
-
         }
-
-
-
     } catch (error) {
         res.json(error)
     }
