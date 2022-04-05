@@ -16,7 +16,20 @@ module.exports.publicPost_get = async(req, res) => {
                 post.liked = false
             }
         })
-        res.json(posts)
+
+        const page = req.query.page
+        const limit = req.query.limit
+
+        if (page && limit) {
+            const startIndex = (page - 1) * limit
+            const endIndex = page * limit
+            const returnpage = posts.slice(startIndex, endIndex)
+            res.json(returnpage)
+        } else {
+            console.log('posts');
+            res.json(posts)
+        }
+
 
     } catch (error) {
         console.log(error)
