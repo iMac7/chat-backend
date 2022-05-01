@@ -6,12 +6,22 @@ const replySchema = new mongoose.Schema({
         required: true,
     },
 
-    sendTime: Date,
 
     content: {
         type: String,
         required: true,
         maxlength: 100,
+    },
+    //actual date to display in the frontend
+    sendTime: {
+        type: String,
+        required: true,
+    },
+
+    //date used for sorting items in backend
+    time: {
+        type: Number,
+        required: true,
     },
 
     imageUrl: {
@@ -37,7 +47,17 @@ const postSchema = new mongoose.Schema({
         required: true,
     },
 
-    sendTime: Date,
+    //actual date to display in the frontend
+    sendTime: {
+        type: String,
+        // required: true,
+    },
+
+    //date used for sorting items in backend
+    time: {
+        type: Number,
+        // required: true,
+    },
 
     content: {
         type: String,
@@ -68,6 +88,7 @@ const postSchema = new mongoose.Schema({
     }
 
 }, { collection: 'postcontents' })
+
 
 
 module.exports = mongoose.model('PostContent', postSchema)

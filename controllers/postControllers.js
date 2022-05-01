@@ -7,7 +7,10 @@ module.exports.publicPost_get = async(req, res) => {
     const userID = JSON.parse(req.headers.authorization).userID
 
     try {
-        const posts = await Post.find().lean()
+        const posts = await Post.find().sort({ time: -1 })
+            .skip((req.query.page - 1) * req.query.limit)
+            .limit(req.query.limit)
+            .lean()
 
         const newposts = posts.map(post => {
             if (post.likedBy.includes(userID)) {
@@ -17,20 +20,11 @@ module.exports.publicPost_get = async(req, res) => {
             }
         })
 
-        const page = req.query.page
-        const limit = req.query.limit
-
-        if (page && limit) {
-            const startIndex = (page - 1) * limit
-            const endIndex = page * limit
-            const returnpage = posts.slice(startIndex, endIndex)
-            res.json(returnpage)
+        if (posts === []) {
+            return
         } else {
-            console.log('posts');
             res.json(posts)
         }
-
-
     } catch (error) {
         console.log(error)
     }
@@ -51,23 +45,31 @@ module.exports.publicPost_post = async(req, res) => {
         const user = await User.findOne({ _id: sender })
         console.log(user.username);
 
+        const date = new Date().toLocaleString()
+        const time = Date.now()
         if (req.file) {
             const post = await Post.create({
-                    sender: user.username,
-                    content: content,
-                    imageUrl: req.file.path,
-                })
-                .then(res.status(201).json('post successful'))
+                sender: user.username,
+                content: content,
+                imageUrl: req.file && req.file.path,
+                sendTime: date,
+                time: time
+            })
+            return res.json('post successful')
 
         } else {
             const post = await Post.create({
-                    sender: user.username,
-                    content: content,
-                })
-                .then(res.status(201).json('post successful'))
+                sender: user.username,
+                content: content,
+                sendTime: date,
+                time: time
+            })
+            return res.json('post successful')
         }
+
     } catch (error) {
-        res.json(error)
+        console.log(error)
+        return res.json(error)
     }
 }
 
