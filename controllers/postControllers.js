@@ -1,23 +1,26 @@
 const Post = require('../models/Post')
 const User = require('../models/User')
+const fs = require('fs')
 
-
+//post urls
 module.exports.publicPost_get = async(req, res) => {
 
     const userID = JSON.parse(req.headers.authorization).userID
 
     try {
         const posts = await Post.find().sort({ time: -1 })
+            .select('-time')
             .skip((req.query.page - 1) * req.query.limit)
             .limit(req.query.limit)
             .lean()
 
         const newposts = posts.map(post => {
-            if (post.likedBy.includes(userID)) {
-                post.liked = true
-            } else {
-                post.liked = false
-            }
+            if (post.likedBy.includes(userID)) post.liked = true
+            else { post.liked = false }
+
+
+            post.likes = post.likedBy.length
+            post.replies = post.replies.length
         })
 
         if (posts === []) {
@@ -27,29 +30,23 @@ module.exports.publicPost_get = async(req, res) => {
         }
     } catch (error) {
         console.log(error)
+        return res.json(error)
     }
 }
-
-//get
-module.exports.publicPost_replies = async(req, res) => {
-    const post = await Post.findOne({ _id: req.params.id })
-    res.json(post)
-}
-
 
 module.exports.publicPost_post = async(req, res) => {
 
     try {
         const { content, sender } = req.body
-        console.log(content, sender);
+        console.log('sender', sender, typeof sender)
         const user = await User.findOne({ _id: sender })
-        console.log(user.username);
 
         const date = new Date().toLocaleString()
         const time = Date.now()
         if (req.file) {
             const post = await Post.create({
                 sender: user.username,
+                senderID: sender,
                 content: content,
                 imageUrl: req.file && req.file.path,
                 sendTime: date,
@@ -60,6 +57,7 @@ module.exports.publicPost_post = async(req, res) => {
         } else {
             const post = await Post.create({
                 sender: user.username,
+                senderID: sender,
                 content: content,
                 sendTime: date,
                 time: time
@@ -71,11 +69,23 @@ module.exports.publicPost_post = async(req, res) => {
         console.log(error)
         return res.json(error)
     }
+
 }
 
-module.exports.likePost_post = async(req, res) => {
-    console.log(req.body);
+module.exports.publicPost_delete = async(req, res) => {
+    try {
+        const post = await Post.findOne({ _id: req.params.id })
+        if (post.imageUrl) { fs.unlink(post.imageUrl, err => console.log(err)) }
+        await Post.deleteOne({ _id: req.params.id })
+        res.status(200).json('deleted !')
+    } catch (error) {
+        console.log(error)
+        res.status(400).json(error)
+    }
+}
 
+//post like & unlike
+module.exports.likePost_post = async(req, res) => {
 
     try {
         const post = await Post.findOne({ _id: req.body.postID })
@@ -86,7 +96,7 @@ module.exports.likePost_post = async(req, res) => {
             post.likes -= 1
             post.likedBy.splice(post.likedBy.indexOf(senderID), 1)
             await post.save()
-            res.json('unliked :( ')
+            res.json('unliked :(')
 
         } else {
             post.likes += 1
@@ -97,6 +107,55 @@ module.exports.likePost_post = async(req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.json(error)
+        return res.json(error)
+    }
+}
+
+//reply urls
+module.exports.publicPost_replies_get = async(req, res) => {
+    const uid = JSON.parse(req.headers.authorization)
+    const post = await Post.findOne({ _id: req.params.id })
+    post.replies = post.replies.reverse()
+    post.deletable = true
+    res.json(post)
+}
+
+module.exports.publicPost_replies_post = async(req, res) => {
+    console.log(req.body)
+    const reply = req.body.post
+    const userID = req.body.sender.userID
+    console.log(userID)
+    const post = await Post.findOne({ _id: req.params.id })
+    const user = await User.findOne({ _id: userID })
+        //sender content sendtime time
+    const date = new Date().toLocaleString()
+    const time = Date.now()
+
+    post.replies.push({
+        sender: userID,
+        senderName: user.username,
+        content: reply,
+        sendTime: date,
+        time: time
+    })
+    await post.save()
+    res.json('reply sent !')
+}
+
+module.exports.publicPost_replies_delete = async(req, res) => {
+    try {
+        const userID = JSON.parse(req.headers.authorization).userID
+
+        const post = await Post.findOne({ _id: req.params.postID })
+        if (post.senderID !== userID) {
+            return res.status(404).json('Unauthorized')
+        }
+        const newreplies = post.replies.filter(element => element.id !== req.params.replyID)
+        post.replies = newreplies
+        await post.save()
+        res.status(200).json('deleted !')
+    } catch (error) {
+        console.log(error)
+        res.status(400).json(error)
     }
 }

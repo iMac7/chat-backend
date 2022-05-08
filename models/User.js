@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema({
         ref: 'PostContent'
     },
 
+    profilepic: {
+        type: String,
+        default: null,
+    },
+
     verified: {
         type: Boolean,
         default: false,

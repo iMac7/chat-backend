@@ -6,6 +6,10 @@ const replySchema = new mongoose.Schema({
         required: true,
     },
 
+    senderName: {
+        type: String,
+        required: true
+    },
 
     content: {
         type: String,
@@ -47,6 +51,11 @@ const postSchema = new mongoose.Schema({
         required: true,
     },
 
+    senderID: {
+        type: String,
+        required: true
+    },
+
     //actual date to display in the frontend
     sendTime: {
         type: String,
@@ -82,13 +91,7 @@ const postSchema = new mongoose.Schema({
         ref: 'User'
     },
 
-    profilePic: {
-        type: String,
-        default: null
-    }
-
 }, { collection: 'postcontents' })
-
 
 
 module.exports = mongoose.model('PostContent', postSchema)
