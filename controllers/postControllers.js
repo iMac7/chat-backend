@@ -127,7 +127,6 @@ module.exports.publicPost_replies_post = async(req, res) => {
     console.log(userID)
     const post = await Post.findOne({ _id: req.params.id })
     const user = await User.findOne({ _id: userID })
-        //sender content sendtime time
     const date = new Date().toLocaleString()
     const time = Date.now()
 
@@ -146,15 +145,12 @@ module.exports.publicPost_replies_delete = async(req, res) => {
     try {
         const userID = JSON.parse(req.headers.authorization).userID
 
-        // console.log(req.params.postID)
         const post = await Post.findOne({ _id: req.params.postID })
         if (post.senderID !== userID) {
             return res.status(404).json('Unauthorized')
         }
         console.log('replies', post.replies.length)
-        const newreplies = post.replies.filter(element => {
-            element.id !== req.params.replyID
-        })
+        const newreplies = post.replies.filter(element => element.id !== req.params.replyID)
         post.replies = newreplies
         await post.save()
         res.status(200).json('deleted !')
