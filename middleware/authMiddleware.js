@@ -8,19 +8,16 @@ module.exports = (req, res, next) => {
     if (req.method === 'OPTIONS') {
         return next()
     }
-    const token = req.headers.authorization.token
-        // console.log(token);
-        // next()
+
+    const token = JSON.parse(req.headers.authorization).token
 
     if (token) {
         try {
             jwt.verify(token, process.env.secret, (err, decodedToken) => {
                 if (err) {
-                    console.log('invalid token, redirecting to login')
                     res.status(403).json('/login')
                 } else {
-                    console.log(decodedToken)
-                    console.log("token ok")
+                    req.userData = { decodedToken }
                     next()
                 }
             })

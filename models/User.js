@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
 
     bio: {
         type: String,
-        maxlength: [40, 'imetosha bro! XD ']
+        trim: true,
+        maxlength: [30, 'imetosha bro! XD ']
     },
 
     password: {

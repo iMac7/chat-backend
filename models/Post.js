@@ -15,6 +15,7 @@ const replySchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 100,
+        trim: true,
     },
     //actual date to display in the frontend
     sendTime: {
@@ -72,6 +73,10 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 100,
+    },
+
+    profileUrl: {
+        type: String,
     },
 
     imageUrl: {

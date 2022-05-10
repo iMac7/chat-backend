@@ -8,12 +8,11 @@ require('dotenv').config()
 
 module.exports.signUp_post = async(req, res) => {
     console.log(req.body)
-    const { email, password } = req.body
+    const { email, password, username } = req.body
 
     try {
-        const user = await User.create({ email, password })
-        console.log(`created user: ${user}`);
-        res.status(201).json('user created successfully.go to login')
+        const user = await User.create({ email, password, username })
+        res.status(201).json('login')
 
     } catch (error) {
         res.status(500).json({ success: false, error: error.message })
@@ -35,7 +34,7 @@ module.exports.signIn_post = async(req, res) => {
 
             if (compare) {
                 const token = jwt.sign(user.id, process.env.secret)
-                res.status(200).json({ userID: user.id, token: token, verified: user.verified })
+                res.status(200).json({ userID: user.id, token: token, verified: user.verified, dp: user.profilepic })
 
             } else {
                 console.log(`compare:${compare}`)
@@ -45,7 +44,8 @@ module.exports.signIn_post = async(req, res) => {
             res.status(404).json('user not found')
         }
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        // res.status(500).json({ error: error.message })
+        console.log(error)
     }
 
 }
