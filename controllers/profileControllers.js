@@ -32,6 +32,9 @@ module.exports.profilepic_post = async(req, res) => {
     try {
         if (req.file) {
             const user = await User.findOne({ _id: userdata.userID })
+            if (typeof user.profilepic === string) {
+                fs.unlink(user.profilepic, err => console.log(err))
+            }
             user.profilepic = req.file.path
             await user.save()
             res.json('profile pic updated :)')
