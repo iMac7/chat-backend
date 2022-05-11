@@ -34,8 +34,10 @@ app.use((req, res, next) => {
 })
 
 app.use(bodyParser.json())
+
+app.use(authRoutes)
+
 app.use(authMiddleware)
 
 app.use(postRoutes)
-app.use(authRoutes)
 app.use(profileRoutes)
