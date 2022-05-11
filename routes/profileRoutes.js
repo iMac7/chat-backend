@@ -1,7 +1,6 @@
 const { Router } = require('express')
 const profileControllers = require('../controllers/profileControllers')
 const fileUpload = require('../middleware/fileUpload')
-const User = require('../models/User')
 
 const router = Router()
 
