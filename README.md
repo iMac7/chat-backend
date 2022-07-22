@@ -1,5 +1,5 @@
 # chat-backend
-A backend for a full stack chat application, (frontend in the chat-backend repo)
+A backend for a full stack chat application (frontend in the chat-frontend repo)
 
 This is a node application that uses the MVC format and RESTful APIs. It includes:
   -server.js - the main server file. it connects to the mongodb database via the mongoose library and also contains the port the server runs on.
