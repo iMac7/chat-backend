@@ -27,7 +27,7 @@ module.exports.signIn_post = async(req, res) => {
 
     try {
         const user = await User.findOne({ email: req.body.email })
-
+        
         if (user) {
             const compare = await user.comparePassword(body.password)
 
@@ -36,7 +36,7 @@ module.exports.signIn_post = async(req, res) => {
                 res.status(200).json({ userID: user.id, token: token, verified: user.verified, dp: user.profilepic })
 
             } else {
-                console.log(`compare:${compare}`)
+                // console.log(`compare:${compare}`)
                 res.status(400).json('wrong password')
             }
         } else {

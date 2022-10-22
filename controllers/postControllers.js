@@ -9,10 +9,11 @@ module.exports.publicPost_get = async(req, res) => {
 
     try {
         const posts = await Post.find().sort({ time: -1 })
-            .select('-time')
             .skip((req.query.page - 1) * req.query.limit)
             .limit(req.query.limit)
             .lean()
+
+        console.log(posts)
 
         const newposts = posts.map(post => {
             if (post.likedBy.includes(userID)) post.liked = true

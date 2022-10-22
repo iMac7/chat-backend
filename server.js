@@ -12,7 +12,7 @@ const postRoutes = require('./routes/postRoutes')
 const profileRoutes = require('./routes/profileRoutes')
 const authMiddleware = require('./middleware/authMiddleware')
 
-const connectionString = 'mongodb://localhost/Users'
+const connectionString = 'mongodb://0.0.0.0:27017/mash'
 const app = express()
 const port = 3001
 
